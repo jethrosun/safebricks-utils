@@ -1,0 +1,5 @@
+*.qcow2
+corectl/*-version.txt
+*.tar
+*.tgz
+*_key
