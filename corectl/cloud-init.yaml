@@ -1,6 +1,6 @@
 #cloud-config
 
-hostname: occam-dev
+hostname: williamofockham
 coreos:
   units:
     - name: docker-tcp.socket

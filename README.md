@@ -21,14 +21,14 @@ This will, in order:
    `corectld`. At this step you will be asked for your password.
 3. Download the latest `alpha` channel CoreOS image.
 4. Create and format a persistent disk image in the current directory.
-5. Boot the `occam-dev` VM with the persistent disk attached and
+5. Boot the `williamofockham` VM with the persistent disk attached and
    configure Docker for local use with IPv6 enabled.
 
 Once the VM is booted, you can interact with its Docker daemon with
 the following:
 
 ``` shell
-$ export DOCKER_HOST=tcp://$(corectl q -i occam-dev):2375
+$ export DOCKER_HOST=tcp://$(corectl q -i williamofockham):2375
 ```
 
 or
@@ -55,13 +55,13 @@ There are a number of environment variables you may change when invoking `make
    channels for CoreOS.
  * `CORECTL_VOLUME_SIZE`: (default: `40GiB`) The size of the QCOW2 image that
    will be created to store the Docker host's container images and state.
- * `CORECTL_VM_NAME`: (default: `occam-dev`) The name of the CoreOS VM to be
+ * `CORECTL_VM_NAME`: (default: `williamofockham`) The name of the CoreOS VM to be
    created.
  * `CORECTL_CPUS`: (default: `2`) The number CPU cores to allocate to the
    virtual machine.
  * `CORECTL_RAM`: (default: `4096`) The amount of RAM to allocate to the virtual
    machine, in megabytes.
- * `CORECTL_VOLUME`: (default: `occam-dev-docker.img.qcow2`) The filename of the
+ * `CORECTL_VOLUME`: (default: `williamofockham-docker.img.qcow2`) The filename of the
    QCOW2 image that will be created to store the Docker host's container images
    and state.
  * `CORECTL_INIT`: (default: `corectl/cloud-init.yaml`) A `cloud-init` file used
@@ -73,7 +73,7 @@ There are a number of environment variables you may change when invoking `make
 ### SSH'ing and Destroying the vm
 
 If you need to connect to the VM, for example to get the configured
-IPv6 address, use `corectl ssh occam-dev`.
+IPv6 address, use `corectl ssh williamofockham`.
 
 To shutdown and destroy the VM and its persistent storage, run `make
 -f corectl.mk destroy`.

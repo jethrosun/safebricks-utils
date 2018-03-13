@@ -28,10 +28,10 @@ CORECTLD ?= $(or $(shell which corectld),/usr/local/bin/corectld)
 CORECTL_VOLUME_SIZE ?= 40GiB
 
 # Parameters for the final VM that we create
-CORECTL_VM_NAME ?= occam-dev
+CORECTL_VM_NAME ?= williamofockham
 CORECTL_CPUS    ?= 2
 CORECTL_RAM     ?= 4096
-CORECTL_VOLUME  ?= occam-dev-docker.img.qcow2
+CORECTL_VOLUME  ?= williamofockham.img.qcow2
 CORECTL_INIT    ?= corectl/cloud-init.yaml
 CORECTL_KERNEL_FLAGS ?= "hugepages=1024"
 
@@ -82,10 +82,10 @@ $(CORECTL_VOLUME): $(IMAGES) $(QCOW) $(CORECTL)
 	@echo "--- Creating qcow2 $(CORECTL_VOLUME) image in $@..."
 	@$(QCOW) create --size=$(CORECTL_VOLUME_SIZE) $(CORECTL_VOLUME)
 	@echo "--- Formatting image as ext4..."
-	@$(CORECTL) run -n occam-fmt -p $(CORECTL_VOLUME) -N 2 -m 2048 -o
-	@$(CORECTL) ssh occam-fmt "sudo mke2fs -b 1024 -i 1024 -t ext4 -m0 /dev/vda && \
+	@$(CORECTL) run -n $(CORECTL_VM_NAME)-fmt -p $(CORECTL_VOLUME) -N 2 -m 2048 -o
+	@$(CORECTL) ssh $(CORECTL_VM_NAME)-fmt "sudo mke2fs -b 1024 -i 1024 -t ext4 -m0 /dev/vda && \
             sudo e2label /dev/vda rkthdd"
-	@$(CORECTL) halt occam-fmt
+	@$(CORECTL) halt $(CORECTL_VM_NAME)-fmt
 
 # Idempotently starts `corectld`
 daemon: $(CORECTLD)
@@ -112,6 +112,7 @@ $(CORECTL) $(CORECTLD) $(QCOW):
 destroy: $(CORECTL)
 	-@$(CORECTL) halt $(CORECTL_VM_NAME) ${SILENT}
 	-@rm -f $(CORECTL_VOLUME) ${SILENT}
+	-@rm -f corectl/$(COREOS_CHANNEL)-version.txt ${SILENT}
 
 # Prints environment variables needed for Docker setup
 env:
