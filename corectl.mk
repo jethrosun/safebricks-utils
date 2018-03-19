@@ -33,7 +33,7 @@ CORECTL_CPUS    ?= 2
 CORECTL_RAM     ?= 4096
 CORECTL_VOLUME  ?= williamofockham.img.qcow2
 CORECTL_INIT    ?= corectl/cloud-init.yaml
-CORECTL_KERNEL_FLAGS ?= "hugepages=1024"
+CORECTL_KERNEL_FLAGS ?= "hugepagesz=1G hugepages=8"
 
 # Flags for the `corectl run` command that will start the vm.
 CORECTL_RUN_FLAGS = -b $(CORECTL_KERNEL_FLAGS) \
