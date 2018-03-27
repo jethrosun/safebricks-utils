@@ -1,0 +1,33 @@
+FROM williamofockham/dpdk:latest
+
+ENV RUSTUP_TOOLCHAIN=nightly \
+PATH=$PATH:/root/.cargo/bin
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    apt-utils \
+    bash \
+    ca-certificates \
+    clang \
+    cmake \
+    curl \
+    gcc \
+    git \
+    libc-dev \
+    libcurl4-gnutls-dev \
+    libgnutls30 libgnutls-openssl-dev \
+    libssl-dev \
+    make \
+    musl-dev \
+    musl-tools \
+    net-tools \
+    sudo && \
+    curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain ${RUSTUP_TOOLCHAIN} && \
+    rustup --version; \
+    cargo --version; \
+    rustc --version && \
+    cargo install rustfmt-nightly clippy && \
+    apt-get purge --auto-remove -y curl git && \
+    rm -rf /var/lib/apt /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+WORKDIR /opt/sandbox
+CMD /bin/bash

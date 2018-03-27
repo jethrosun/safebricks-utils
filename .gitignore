@@ -3,3 +3,5 @@ corectl/*-version.txt
 *.tar
 *.tgz
 *_key
+.vagrant
+*.log
