@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Install dependencies
+sudo apt-get -q update
+sudo apt-get -q install -y mg make git
+
 # Allocate 1024 hugepages of 2 MB
 # Change can be validated by executing 'cat /proc/meminfo | grep Huge'
 echo 1024 > /sys/kernel/mm/hugepages/hugepages-2048kB/nr_hugepages
@@ -31,6 +35,6 @@ docker run \
        -v /dev:/dev \
        -v /var/run:/var/run \
        $1 \
-       /bin/bash -c "usertools/dpdk-devbind.py --force -b uio_pci_generic 0000:00:08.0"
+       /bin/bash -c "/dpdk/usertools/dpdk-devbind.py --force -b uio_pci_generic 0000:00:08.0"
 
 echo "cd /vagrant" >> /home/vagrant/.bashrc

@@ -28,5 +28,5 @@ RUN wget --no-check-certificate https://fast.dpdk.org/rel/dpdk-$VERSION.tar.xz &
 WORKDIR $RTE_SDK
 
 COPY dpdk/common_linuxapp-17.08.container $RTE_SDK/config/common_linuxapp
-RUN make config T=x86_64-native-linuxapp-gcc
+RUN ln -s $RTE_SDK/ /dpdk && make config T=x86_64-native-linuxapp-gcc
 RUN make all
