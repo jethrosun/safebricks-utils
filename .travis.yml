@@ -1,0 +1,24 @@
+sudo: required
+
+language: generic
+
+services:
+  - docker
+
+before_install:
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+
+jobs:
+  include:
+    - stage: push-dpdk-image
+      script: make -f docker.mk -e CONTAINER=dpdk image-fresh
+      if: branch = master
+    - stage: build-dpdk-image
+      script: make -f docker.mk -e CONTAINER=dpdk build-fresh
+      if: branch != master
+    - stage: push-sandbox-image
+      script: make -f docker.mk -e CONTAINER=sandbox image-fresh
+      if: branch = master
+    - stage: build-sandbox-image
+      script: make -f docker.mk -e CONTAINER=sandbox build-fresh
+      if: branch != master
