@@ -12,7 +12,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     gcc \
     git \
+    gdb \
+    gdbserver \
     libc-dev \
+    libclang-dev \
     libcurl4-gnutls-dev \
     libgnutls30 libgnutls-openssl-dev \
     libssl-dev \
@@ -20,14 +23,19 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     musl-dev \
     musl-tools \
     net-tools \
+    tcpdump \
+    valgrind \
     sudo && \
     curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain ${RUSTUP_TOOLCHAIN} && \
     rustup --version; \
     cargo --version; \
     rustc --version && \
-    cargo install rustfmt-nightly clippy && \
+    rustup component add rustfmt-preview rust-src && \
+    cargo install clippy cargo-watch && \
     apt-get purge --auto-remove -y curl git && \
     rm -rf /var/lib/apt /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+RUN mv /usr/sbin/tcpdump /usr/bin/tcpdump
 
 WORKDIR /opt/sandbox
 CMD /bin/bash

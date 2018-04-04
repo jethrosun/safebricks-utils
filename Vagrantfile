@@ -10,19 +10,41 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # options are documented and commented below. For a complete reference,
   # please see the online documentation at https://docs.vagrantup.com.
   config.vm.box = "ubuntu/xenial64"
-  config.disksize.size = "50GB"
+  config.disksize.size = "30GB"
   config.vm.synced_folder ".", "/vagrant", disabled: false
 
   # Create a private network, which allows host-only access to the machine using a
   # specific IP. This option is needed because DPDK takes over the NIC.
   config.vm.network "private_network", ip: "10.0.0.10"
 
-  # Pull our DPDK image
-  config.vm.provision "docker", images: [$dimage]
-
   # Setup the VM for DPDK, including binding the extra interface via the fetched
   # container
   config.vm.provision "shell", path: "vm-setup.sh", args: $dimage
+
+  # Pull and run (then remove) our image in order to do the devbind
+  config.vm.provision "docker" do |d|
+    d.pull_images "#{$dimage}"
+    d.run "#{$dimage}",
+          auto_assign_name: false,
+          args: %w(--name=netbricks
+                   --rm
+                   --privileged
+                   --pid=host
+                   --network=host
+                   -v /lib/modules:/lib/modules
+                   -v /sys/bus/pci/drivers:/sys/bus/pci/drivers
+                   -v /sys/kernel/mm/hugepages:/sys/kernel/mm/hugepages
+                   -v /sys/devices/system/node:/sys/devices/system/node
+                   -v /sbin/modinfo:/sbin/modinfo
+                   -v /bin/kmod:/bin/kmod
+                   -v /sbin/lsmod:/sbin/lsmod
+                   -v /dev:/dev
+                   -v /var/run:/var/run).join(" "),
+          restart: "no",
+          daemonize: true,
+          cmd: "/bin/bash -c '/dpdk/usertools/dpdk-devbind.py --force -b uio_pci_generic 0000:00:08.0'"
+  end
+
 
   # VirtualBox-specific configuration
   config.vm.provider "virtualbox" do |vb|

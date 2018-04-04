@@ -9,7 +9,9 @@ ENV RTE_ARCH x86_64
 ENV CFLAGS "-g3 -Wno-error=maybe-uninitialized -fPIC"
 
 RUN apt-get update && apt-get install -y \
+    apt-utils \
     build-essential \
+    dialog \
     libnuma-dev \
     libpcap-dev \
     pciutils \
