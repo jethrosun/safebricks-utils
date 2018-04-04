@@ -12,13 +12,13 @@ jobs:
   include:
     - stage: push-dpdk-image
       script: make -f docker.mk -e CONTAINER=dpdk image-fresh
-      if: branch = master
+      if: branch = master AND type != pull_request
     - stage: build-dpdk-image
       script: make -f docker.mk -e CONTAINER=dpdk build-fresh
-      if: branch != master
+      if: branch != master OR type = pull_request
     - stage: push-sandbox-image
       script: make -f docker.mk -e CONTAINER=sandbox image-fresh
-      if: branch = master
+      if: branch = master AND type != pull_request
     - stage: build-sandbox-image
       script: make -f docker.mk -e CONTAINER=sandbox build-fresh
-      if: branch != master
+      if: branch != master OR type = pull_request

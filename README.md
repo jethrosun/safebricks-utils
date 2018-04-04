@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/williamofockham/utils.svg?branch=master)](https://travis-ci.org/williamofockham/utils)
+
 # utils
 
 Utilities for NF developer setup/etc
