@@ -17,6 +17,7 @@ RUN apt-get update && apt-get install -y \
     pciutils \
     python \
     python3 \
+    python-pip \
     wget && \
     rm -rf /var/lib/apt /var/lib/apt/lists/* /tmp/* /var/tmp/*
 

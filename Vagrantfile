@@ -15,7 +15,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Create a private network, which allows host-only access to the machine using a
   # specific IP. This option is needed because DPDK takes over the NIC.
-  config.vm.network "private_network", ip: "10.0.0.10"
+  config.vm.network "private_network", ip: "10.1.2.2"
+  config.vm.network "private_network", ip: "10.1.2.3"
 
   # Setup the VM for DPDK, including binding the extra interface via the fetched
   # container
@@ -42,7 +43,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
                    -v /var/run:/var/run).join(" "),
           restart: "no",
           daemonize: true,
-          cmd: "/bin/bash -c '/dpdk/usertools/dpdk-devbind.py --force -b uio_pci_generic 0000:00:08.0'"
+          cmd: "/bin/bash -c '/dpdk/usertools/dpdk-devbind.py --force -b uio_pci_generic 0000:00:08.0 0000:00:09.0'"
   end
 
 
