@@ -2,7 +2,7 @@
 
 # Install dependencies
 sudo apt-get -q update
-sudo apt-get -q install -y mg make git linux-headers-`uname -r` linux-image-extra-$(uname -r)
+sudo apt-get -q install -y cmake mg make git linux-headers-`uname -r` linux-image-extra-$(uname -r)
 
 # Allocate 1024 hugepages of 2 MB
 # Change can be validated by executing 'cat /proc/meminfo | grep Huge'

@@ -16,11 +16,20 @@ DPDK_CONTAINER = dpdk
 CONTAINER ?= $(SANDBOX_CONTAINER)
 BASE_DIR ?= $(SANDBOX_BASE_DIR)
 
+# Our Vagrant setup places MoonGen's repo @ /MoonGen
+# This works off of being relative (../) to utils/sandbox.
+MOONGEN_DIR ?= $(or $(basename $(dirname $(shell pwd)))/MoonGen,\
+~/williamofockham/MoonGen)
+
+FILES_TO_MOUNT := $(foreach f,$(filter-out build libmoon,\
+$(notdir $(wildcard $(MOONGEN_DIR)/*))), -v $(MOONGEN_DIR)/$(f):/opt/moongen/$(f))
+BASE_MOUNT := -v $(BASE_DIR):/opt/$(CONTAINER)
+
 ifeq ($(CONTAINER),$(DPDK_CONTAINER))
   DOCKERFILE=dpdk/Dockerfile
 endif
 
-LINUX_HEADERS = -v /lib/modules:/lib/modules
+LINUX_HEADERS = -v /lib/modules:/lib/modules -v /usr/src:/usr/src
 MOUNTS = $(LINUX_HEADERS) \
          -v /sys/bus/pci/drivers:/sys/bus/pci/drivers \
          -v /sys/kernel/mm/hugepages:/sys/kernel/mm/hugepages \
@@ -29,7 +38,11 @@ MOUNTS = $(LINUX_HEADERS) \
          -v /bin/kmod:/bin/kmod \
          -v /sbin/lsmod:/sbin/lsmod \
          -v /dev:/dev \
-         -v /var/run:/var/run
+         -v /mnt/huge:/mnt/huge \
+         -v /var/run:/var/run \
+         $(BASE_MOUNT) \
+         $(FILES_TO_MOUNT)
+
 
 .PHONY: build build-fresh run run-reg run-dpdk run-reg-dpdk tag push pull image \
         image-fresh rmi rmi-registry vm vm-dpdk
@@ -43,19 +56,23 @@ build-fresh:
 	$(BASE_DIR)
 
 run:
-	@docker run --name $(CONTAINER) -it --rm --privileged --pid='host' \
-	$(MOUNTS) -v $(BASE_DIR):/opt/$(CONTAINER) $(CONTAINER):$(TAG)
+	@docker run --name $(CONTAINER) -it --rm --privileged \
+	--pid='host' --network='host' \
+	$(MOUNTS) $(CONTAINER):$(TAG)
 
 run-reg:
-	@docker run --name $(CONTAINER) -it --rm --privileged --pid='host' \
-	$(MOUNTS) -v $(BASE_DIR):/opt/$(CONTAINER) $(PROJECT)/$(CONTAINER):$(TAG)
+	@docker run --name $(CONTAINER) -it --rm --privileged \
+	--pid='host' --network='host' \
+	$(MOUNTS) $(PROJECT)/$(CONTAINER):$(TAG)
 
 run-dpdk:
-	@docker run --name $(DPDK_CONTAINER) -it --rm --privileged --pid='host' \
+	@docker run --name $(DPDK_CONTAINER) -it --rm --privileged \
+	--pid='host' --network='host' \
 	$(MOUNTS) $(DPDK_CONTAINER):$(TAG)
 
 run-reg-dpdk:
-	@docker run --name $(DPDK_CONTAINER) -it --rm --privileged --pid='host' \
+	@docker run --name $(DPDK_CONTAINER) -it --rm --privileged \
+	--pid='host' --network='host' \
 	$(MOUNTS) $(PROJECT)/$(DPDK_CONTAINER):$(TAG)
 
 tag:

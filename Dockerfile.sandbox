@@ -1,7 +1,11 @@
-FROM williamofockham/dpdk:latest
+FROM williamofockham/moongen AS moongen
+
+FROM williamofockham/dpdk
 
 ENV RUSTUP_TOOLCHAIN=nightly \
 PATH=$PATH:/root/.cargo/bin
+
+COPY --from=moongen /opt/moongen /opt/moongen
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     apt-utils \
@@ -20,6 +24,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libgnutls30 libgnutls-openssl-dev \
     libssl-dev \
     make \
+    mg \
     musl-dev \
     musl-tools \
     net-tools \
@@ -32,7 +37,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     rustc --version && \
     rustup component add rustfmt-preview rust-src && \
     cargo install clippy cargo-watch && \
-    apt-get purge --auto-remove -y curl git && \
+    apt-get purge --auto-remove -y curl && \
     rm -rf /var/lib/apt /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN mv /usr/sbin/tcpdump /usr/bin/tcpdump

@@ -5,3 +5,4 @@ corectl/*-version.txt
 *_key
 .vagrant
 *.log
+MoonGen
