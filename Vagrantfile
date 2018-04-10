@@ -3,7 +3,17 @@
 # Vagrant file API/syntax version. Don't touch unless you know what you're doing!
 VAGRANTFILE_API_VERSION = "2"
 
-$dimage = ENV.fetch("IMG", "williamofockham/sandbox")
+def path_exists?(path)
+  File.directory?(path)
+end
+
+$dimage = ENV.fetch("DIMAGE", "netbricks")
+$dtag = ENV.fetch("DTAG", "latest")
+$dproject = ENV.fetch("DPROJECT", "williamofockham")
+$nbpath = ENV.fetch("NBPATH", "../NetBricks")
+$mgpath = ENV.fetch("MGPATH", "../MoonGen")
+$dpdk_driver = ENV.fetch("DPDK_DRIVER", "uio_pci_generic")
+$dpdk_devices = ENV.fetch("DPDK_DEVICES", "0000:00:08.0 0000:00:09.0")
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # All Vagrant configuration is done here. The most common configuration
@@ -12,7 +22,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "ubuntu/xenial64"
   config.disksize.size = "30GB"
   config.vm.synced_folder ".", "/vagrant", disabled: false
-  config.vm.synced_folder "../MoonGen", "/MoonGen", disabled: false
+  if path_exists?($nbpath)
+    config.vm.synced_folder $nbpath, "/NetBricks", disabled: false
+  end
+  if path_exists?($mgpath)
+    config.vm.synced_folder $mgpath, "/MoonGen", disabled: false
+  end
 
   # Create a private network, which allows host-only access to the machine using a
   # specific IP. This option is needed because DPDK takes over the NIC.
@@ -21,14 +36,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Setup the VM for DPDK, including binding the extra interface via the fetched
   # container
-  config.vm.provision "shell", path: "vm-setup.sh", args: $dimage
+  config.vm.provision "shell", path: "vm-setup.sh"
 
   # Pull and run (then remove) our image in order to do the devbind
   config.vm.provision "docker" do |d|
-    d.pull_images "#{$dimage}"
-    d.run "#{$dimage}",
+    d.pull_images "#{$dproject}/#{$dimage}:#{$dtag}"
+    d.run "#{$dproject}/#{$dimage}:#{$dtag}",
           auto_assign_name: false,
-          args: %w(--name=netbricks
+          args: %w(--name=$dimage
                    --rm
                    --privileged
                    --pid=host
@@ -46,7 +61,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
                    -v /var/run:/var/run).join(" "),
           restart: "no",
           daemonize: true,
-          cmd: "/bin/bash -c '/dpdk/usertools/dpdk-devbind.py --force -b uio_pci_generic 0000:00:08.0 0000:00:09.0'"
+          cmd: "/bin/bash -c '/dpdk/usertools/dpdk-devbind.py --force -b #{$dpdk_driver} #{$dpdk_devices}'"
   end
 
   # VirtualBox-specific configuration
