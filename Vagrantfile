@@ -12,6 +12,8 @@ $dtag = ENV.fetch("DTAG", "latest")
 $dproject = ENV.fetch("DPROJECT", "williamofockham")
 $nbpath = ENV.fetch("NBPATH", "../NetBricks")
 $mgpath = ENV.fetch("MGPATH", "../MoonGen")
+$dpdk_driver = ENV.fetch("DPDK_DRIVER", "uio_pci_generic")
+$dpdk_devices = ENV.fetch("DPDK_DEVICES", "0000:00:08.0 0000:00:09.0")
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # All Vagrant configuration is done here. The most common configuration
@@ -59,7 +61,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
                    -v /var/run:/var/run).join(" "),
           restart: "no",
           daemonize: true,
-          cmd: "/bin/bash -c '/dpdk/usertools/dpdk-devbind.py --force -b uio_pci_generic 0000:00:08.0 0000:00:09.0'"
+          cmd: "/bin/bash -c '/dpdk/usertools/dpdk-devbind.py --force -b #{$dpdk_driver} #{$dpdk_devices}'"
   end
 
   # VirtualBox-specific configuration
