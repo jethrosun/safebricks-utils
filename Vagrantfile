@@ -3,6 +3,10 @@
 # Vagrant file API/syntax version. Don't touch unless you know what you're doing!
 VAGRANTFILE_API_VERSION = "2"
 
+def path_exists?(path)
+  File.directory?(path)
+end
+
 $dimage = ENV.fetch("DIMAGE", "netbricks")
 $dtag = ENV.fetch("DTAG", "latest")
 $dproject = ENV.fetch("DPROJECT", "williamofockham")
@@ -16,10 +20,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "ubuntu/xenial64"
   config.disksize.size = "30GB"
   config.vm.synced_folder ".", "/vagrant", disabled: false
-  config.vm.synced_folder $nbpath, "/NetBricks", disabled: false
-  config.vm.synced_folder $mgpath, "/MoonGen", disabled: false
-
-  config.vm.define $dimage
+  if path_exists?($nbpath)
+    config.vm.synced_folder $nbpath, "/NetBricks", disabled: false
+  end
+  if path_exists?($mgpath)
+    config.vm.synced_folder $mgpath, "/MoonGen", disabled: false
+  end
 
   # Create a private network, which allows host-only access to the machine using a
   # specific IP. This option is needed because DPDK takes over the NIC.
@@ -28,7 +34,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Setup the VM for DPDK, including binding the extra interface via the fetched
   # container
-  config.vm.provision "shell", path: "vm-setup.sh", args: $dtag
+  config.vm.provision "shell", path: "vm-setup.sh"
 
   # Pull and run (then remove) our image in order to do the devbind
   config.vm.provision "docker" do |d|
@@ -59,7 +65,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # VirtualBox-specific configuration
   config.vm.provider "virtualbox" do |vb|
     # Set machine name, memory and CPU limits
-    vb.name = "ubuntu-xenial-#{$dimage}"
+    vb.name = "ubuntu-xenial-williamofockham"
     vb.memory = 4096
     vb.cpus = 2
 
