@@ -40,9 +40,8 @@ MOUNTS = $(LINUX_HEADERS) \
          -v /dev:/dev \
          -v /mnt/huge:/mnt/huge \
          -v /var/run:/var/run \
-         $(BASE_MOUNT) \
-         $(FILES_TO_MOUNT)
 
+ALL_MOUNTS = $(MOUNTS) $(BASE_MOUNT) $(FILES_TO_MOUNT)
 
 .PHONY: build build-fresh run run-reg run-dpdk run-reg-dpdk tag push pull image \
         image-fresh rmi rmi-registry vm vm-dpdk
@@ -58,12 +57,12 @@ build-fresh:
 run:
 	@docker run --name $(CONTAINER) -it --rm --privileged \
 	--pid='host' --network='host' \
-	$(MOUNTS) $(CONTAINER):$(TAG)
+	$(ALL_MOUNTS) $(CONTAINER):$(TAG)
 
 run-reg:
 	@docker run --name $(CONTAINER) -it --rm --privileged \
 	--pid='host' --network='host' \
-	$(MOUNTS) $(PROJECT)/$(CONTAINER):$(TAG)
+	$(ALL_MOUNTS) $(PROJECT)/$(CONTAINER):$(TAG)
 
 run-dpdk:
 	@docker run --name $(DPDK_CONTAINER) -it --rm --privileged \
