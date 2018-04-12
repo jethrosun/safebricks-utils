@@ -15,30 +15,20 @@ before_install:
     if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
       echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
     fi
-  - |
-    $(git diff --name-only ${TRAVIS_COMMIT_RANGE} | grep dpdk/Dockerfile > /dev/null);
-    BUILD_DPDK=$?
-  - |
-    $(git diff --name-only ${TRAVIS_COMMIT_RANGE} | grep Dockerfile.sandbox > /dev/null);
-    BUILD_SANDBOX=$?
 
 jobs:
   include:
     - stage: dpdk
       script: |
-              if [ "$BUILD_DPDK" = "0" ]; then
-                if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
-                  make -f docker.mk -e CONTAINER=dpdk image-fresh
-                else
-                  make -f docker.mk -e CONTAINER=dpdk build-fresh
-                fi
+              if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
+                make -f docker.mk -e CONTAINER=dpdk image-fresh
+              else
+                make -f docker.mk -e CONTAINER=dpdk build-fresh
               fi
     - stage: sandbox
       script: |
-              if [[ "$BUILD_DPDK" = "0" || "$BUILD_SANDBOX" = "0" ]]; then
-                if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
-                  make -f docker.mk -e CONTAINER=sandbox image-fresh
-                else
-                  make -f docker.mk -e CONTAINER=sandbox build-fresh
-                fi
+              if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
+                make -f docker.mk -e CONTAINER=sandbox image-fresh
+              else
+                make -f docker.mk -e CONTAINER=sandbox build-fresh
               fi
