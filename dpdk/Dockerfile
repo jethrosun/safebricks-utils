@@ -32,6 +32,7 @@ RUN wget --no-check-certificate https://fast.dpdk.org/rel/dpdk-$VERSION.tar.xz &
 WORKDIR $RTE_SDK
 
 COPY dpdk/common_linuxapp-17.08.container $RTE_SDK/config/common_linuxapp
-RUN ln -s $RTE_SDK/ /dpdk && make config T=x86_64-native-linuxapp-gcc \
+COPY dpdk/defconfig_x86_64-nhm-linuxapp-gcc $RTE_SDK/config/defconfig_x86_64-nhm-linuxapp-gcc
+RUN ln -s $RTE_SDK/ /dpdk && make config T=x86_64-nhm-linuxapp-gcc \
     EXTRA_CFLAGS="$CFLAGS"
 RUN make -j$(nproc) EXTRA_CFLAGS="$CFLAGS"
