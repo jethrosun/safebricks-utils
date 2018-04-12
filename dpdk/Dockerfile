@@ -6,6 +6,7 @@ ENV VERSION ${DPDK_VERSION:-17.08.1}
 ENV RTE_SDK /opt/dpdk/dpdk-stable-${VERSION}
 ENV RTE_TARGET build
 ENV RTE_ARCH x86_64
+ENV RTE_MACHINE nhm
 ENV CFLAGS "-g3 -Wno-error=maybe-uninitialized -fPIC"
 
 RUN apt-get update && apt-get install -y \
@@ -32,6 +33,6 @@ RUN wget --no-check-certificate https://fast.dpdk.org/rel/dpdk-$VERSION.tar.xz &
 WORKDIR $RTE_SDK
 
 COPY dpdk/common_linuxapp-17.08.container $RTE_SDK/config/common_linuxapp
-RUN ln -s $RTE_SDK/ /dpdk && make config T=x86_64-native-linuxapp-gcc \
+RUN ln -s $RTE_SDK/ /dpdk && CONFIG_RTE_MACHINE=nhm make config T=x86_64-native-linuxapp-gcc \
     EXTRA_CFLAGS="$CFLAGS"
 RUN make -j$(nproc) EXTRA_CFLAGS="$CFLAGS"
