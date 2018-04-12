@@ -10,7 +10,7 @@ DOCKERFILE ?= Dockerfile.sandbox
 SANDBOX_CONTAINER = sandbox
 SANDBOX_BASE_DIR ?= $(or $(shell pwd),~/williamofockham/utils)
 
-DPDK_BASE_DIR ?= $(or $(shell pwd/utils),~/williamofockham/utils/dpdk)
+DPDK_BASE_DIR ?= $(or "$(shell pwd)/dpdk",~/williamofockham/utils/dpdk)
 DPDK_CONTAINER = dpdk
 
 CONTAINER ?= $(SANDBOX_CONTAINER)
@@ -26,7 +26,7 @@ $(notdir $(wildcard $(MOONGEN_DIR)/*))), -v $(MOONGEN_DIR)/$(f):/opt/moongen/$(f
 BASE_MOUNT := -v $(BASE_DIR):/opt/$(CONTAINER)
 
 ifeq ($(CONTAINER),$(DPDK_CONTAINER))
-  DOCKERFILE=dpdk/Dockerfile
+  DOCKERFILE=$(DPDK_BASE_DIR)/Dockerfile
 endif
 
 LINUX_HEADERS = -v /lib/modules:/lib/modules -v /usr/src:/usr/src
