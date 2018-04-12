@@ -57,7 +57,7 @@ CONFIG_RTE_EXEC_ENV_LINUXAPP=y
 ## Set to Nehalem for now to make Travis and Vagrant happy. Will change to
 ## a more appropriate/optimized arch when we know what hardware to target.
 ##
-CONFIG_RTE_MACHINE="nhm"
+CONFIG_RTE_MACHINE="default"
 #
 ##
 ## define the architecture we compile for.

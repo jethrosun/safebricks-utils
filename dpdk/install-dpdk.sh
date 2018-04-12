@@ -34,9 +34,9 @@ rm dpdk-17.08.1.tar.xz
 
 # Build the DPDK library
 cd dpdk-stable-17.08.1
-make config T=x86_64-native-linuxapp-gcc
+CONFIG_RTE_MACHINE=default make config T=x86_64-native-linuxapp-gcc
 make
-make install T=x86_64-native-linuxapp-gcc
+CONFIG_RTE_MACHINE=default make install T=x86_64-native-linuxapp-gcc
 
 ###########################
 # Temporary Configuration
