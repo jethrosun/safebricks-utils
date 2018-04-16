@@ -6,9 +6,13 @@ branches:
 
 language: generic
 
+notifications:
+  email: false
+  slack:
+    secure: iKe1UVHgKeUgYATFivkl6oKJo2SRFyVeIITBG3mBq7PZvJ2KtZeML/vVLZVd0dqWiIAT6IEKMdaGROfqhh786VRRQ0UJp6Ie5/Lyhz4Ixd7lULaBVLzyC3o+RGaimpjwjIx73XshEsz8NFbkWTm1zpX6rTDiTCUC2GqhjwGhU/89veVymTDs4DA4sfopVtSMr2wL32LiDq9FIF6/iCCmlrdoil8FLVtLcQBGORpmHD5RM4DOXfmR5fHdIE0NUJksXE/0RQbNYFD1jx5jhvCNURVBX74AqQjoQ8M2w+31HGzjz+J503fGZeIcPXveTyGXOf+1uZRMMOcgSC8isLqB4+aYh2TRlCeqDVocLAkVp+M1bXEAx6AIJ9JRTKET5GPTkc2iN+YQ/XcBbyKQtQTru/0LQ/IWNbE6sKzla3jD07J2vuV5+9+Llim38yxXv4o5gzd+kx9xRwuTabNPtSxHnlpzJzJw6klvk6sNthtVe04sN/pLs6omH5YYaQOCI8rb20YG6Gv7lyuHC+ugxUoVW7uvyVMVuR6dtwd2Aa1mBFqWhIh2ShCdD2Q8R/ZjwOp5UDiGCpWl1Gfm83KmKmA4oe0/oUL02R7tXVHmtRvEpvPAHkgEbX3DGVJpRw4YdoDNogOuyKfWYt9ZxDiVObb1mLgxBfzk7N31J74QRgnGA7I=
+
 services:
   - docker
-
 before_install:
   - sudo ./vm-setup.sh
   - |
@@ -25,6 +29,7 @@ jobs:
               else
                 make -f docker.mk -e CONTAINER=dpdk build-fresh
               fi
+
     - stage: sandbox
       script: |
               if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
