@@ -31,8 +31,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Create a private network, which allows host-only access to the machine using a
   # specific IP. This option is needed because DPDK takes over the NIC.
-  config.vm.network "private_network", ip: "10.1.2.2"
-  config.vm.network "private_network", ip: "10.1.2.3"
+  config.vm.network "private_network", ip: "10.1.2.2", nic_type: "virtio"
+  config.vm.network "private_network", ip: "10.1.2.3", nic_type: "virtio"
 
   # Setup the VM for DPDK, including binding the extra interface via the fetched
   # container
@@ -69,7 +69,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # Set machine name, memory and CPU limits
     vb.name = "ubuntu-xenial-williamofockham"
     vb.memory = 4096
-    vb.cpus = 2
+    vb.cpus = 4
 
     # Configure VirtualBox to enable passthrough of SSE 4.1 and SSE 4.2 instructions,
     # according to this: https://www.virtualbox.org/manual/ch09.html#sse412passthrough
