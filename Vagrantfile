@@ -43,7 +43,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     d.pull_images "#{$dproject}/#{$dimage}:#{$dtag}"
     d.run "#{$dproject}/#{$dimage}:#{$dtag}",
           auto_assign_name: false,
-          args: %w(--name=$dimage
+          args: %W(--name=#{$dimage}
                    --rm
                    --privileged
                    --pid=host
