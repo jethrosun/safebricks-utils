@@ -6,6 +6,9 @@ ENV NIGHTLY_DATE 2018-04-12
 ENV RUSTUP_TOOLCHAIN=nightly-$NIGHTLY_DATE \
 PATH=$PATH:/root/.cargo/bin
 
+ARG cargo_inc=0
+ENV CARGO_INCREMENTAL=$cargo_inc
+
 COPY --from=moongen /opt/moongen /opt/moongen
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
