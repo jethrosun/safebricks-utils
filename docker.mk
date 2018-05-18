@@ -21,7 +21,7 @@ BASE_DIR ?= $(SANDBOX_BASE_DIR)
 MOONGEN_DIR ?= $(or $(basename $(dirname $(shell pwd)))/MoonGen,\
 ~/williamofockham/MoonGen)
 
-FILES_TO_MOUNT := $(foreach f,$(filter-out build libmoon,\
+FILES_TO_MOUNT := $(foreach f,$(filter-out build,\
 $(notdir $(wildcard $(MOONGEN_DIR)/*))), -v $(MOONGEN_DIR)/$(f):/opt/moongen/$(f))
 BASE_MOUNT := -v $(BASE_DIR):/opt/$(CONTAINER)
 
