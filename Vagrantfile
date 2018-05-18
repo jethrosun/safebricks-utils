@@ -10,6 +10,7 @@ end
 $dimage = ENV.fetch("DIMAGE", "netbricks")
 $dtag = ENV.fetch("DTAG", "latest")
 $dproject = ENV.fetch("DPROJECT", "williamofockham")
+$ogpath = ENV.fetch("OGPATH", "../../og")
 $nbpath = ENV.fetch("NBPATH", "../NetBricks")
 $mgpath = ENV.fetch("MGPATH", "../MoonGen")
 $dpdk_driver = ENV.fetch("DPDK_DRIVER", "uio_pci_generic")
@@ -27,6 +28,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
   if path_exists?($mgpath)
     config.vm.synced_folder $mgpath, "/MoonGen", disabled: false
+  end
+  if path_exists?($ogpath)
+    config.vm.synced_folder $ogpath, "/og", disabled: false
   end
 
   # Create a private network, which allows host-only access to the machine using a
