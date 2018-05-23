@@ -17,9 +17,9 @@ Utilities for NF developer setup/etc
 2. [Install Vagrant](https://www.vagrantup.com/docs/installation/) and
    [VirtualBox](https://www.virtualbox.org/wiki/Downloads).
 3. Install the `vagrant-disksize` (required) and `vagrant-vbguest` (recommended)
-   plugins:
+   `vagrant-reload` (required) plugins:
    ```shell
-   $ vagrant plugin install vagrant-disksize vagrant-vbguest
+   $ vagrant plugin install vagrant-disksize vagrant-vbguest vagrant-reload
    ```
 4. Boot the VM:
    ```shell
