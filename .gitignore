@@ -6,3 +6,4 @@ corectl/*-version.txt
 .vagrant
 *.log
 MoonGen
+*.pcap
