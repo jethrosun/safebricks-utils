@@ -2,12 +2,14 @@ FROM williamofockham/moongen AS moongen
 
 FROM williamofockham/dpdk
 
-ENV NIGHTLY_DATE 2018-04-12
+ENV NIGHTLY_DATE 2018-06-01
 ENV RUSTUP_TOOLCHAIN=nightly-$NIGHTLY_DATE \
 PATH=$PATH:/root/.cargo/bin
 
 ARG cargo_inc=0
+ARG rust_backtrace=1
 ENV CARGO_INCREMENTAL=$cargo_inc
+ENV RUST_BACKTRACE=$rust_backtrace
 
 COPY --from=moongen /opt/moongen /opt/moongen
 
@@ -33,6 +35,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     musl-tools \
     net-tools \
     tcpdump \
+    tcpreplay \
     valgrind \
     sudo
 
@@ -41,7 +44,10 @@ RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain $RUSTUP_TOO
     cargo --version; \
     rustc --version && \
     rustup component add rustfmt-preview rust-src && \
-    cargo install clippy cargo-watch && \
+    cargo install clippy cargo-watch cargo-expand && \
+    rm -rf /usr/local/cargo/registry && \
+    pip install Pygments \
+    --upgrade pip && \
     apt-get purge --auto-remove -y curl && \
     rm -rf /var/lib/apt /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
