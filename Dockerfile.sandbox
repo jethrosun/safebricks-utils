@@ -3,7 +3,7 @@ FROM williamofockham/moongen AS moongen
 FROM williamofockham/dpdk
 
 ENV NIGHTLY_DATE 2018-04-12
-ENV CLIPPY_VERS 0.0.197
+ENV CLIPPY_VERSION 0.0.197
 ENV RUSTUP_TOOLCHAIN=nightly-$NIGHTLY_DATE \
 PATH=$PATH:/root/.cargo/bin
 
@@ -45,7 +45,9 @@ RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain $RUSTUP_TOO
     cargo --version; \
     rustc --version && \
     rustup component add rustfmt-preview rust-src && \
-    cargo install clippy --version $CLIPPY_VERS cargo-watch cargo-expand && \
+    cargo install clippy --version $CLIPPY_VERSION && \
+    cargo install cargo-watch cargo-expand && \
+    rm -rf /usr/local/cargo/registry && \
     pip install Pygments \
     --upgrade pip && \
     apt-get purge --auto-remove -y curl && \
