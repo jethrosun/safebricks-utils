@@ -3,6 +3,12 @@
 # Vagrant file API/syntax version. Don't touch unless you know what you're doing!
 VAGRANTFILE_API_VERSION = "2"
 
+['vagrant-reload', 'vagrant-disksize'].each do |plugin|
+  unless Vagrant.has_plugin?(plugin)
+    raise "Vagrant plugin #{plugin} is not installed!"
+  end
+end
+
 def path_exists?(path)
   File.directory?(path)
 end
@@ -40,11 +46,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Setup the VM for DPDK, including binding the extra interface via the fetched
   # container
+  config.vm.provision "shell", path: "vm-kernel-upgrade.sh"
+  config.vm.provision "reload"
   config.vm.provision "shell", path: "vm-setup.sh"
 
   # Pull and run (then remove) our image in order to do the devbind
   config.vm.provision "docker" do |d|
     d.pull_images "#{$dproject}/#{$dimage}:#{$dtag}"
+    d.pull_images "zlim/bcc:xenial"
     d.run "#{$dproject}/#{$dimage}:#{$dtag}",
           auto_assign_name: false,
           args: %W(--name=#{$dimage}
