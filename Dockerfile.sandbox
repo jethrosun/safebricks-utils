@@ -13,6 +13,8 @@ ENV RUST_BACKTRACE=$rust_backtrace
 
 COPY --from=moongen /opt/moongen /opt/moongen
 
+RUN echo "deb [trusted=yes] http://repo.iovisor.org/apt/xenial xenial-nightly main" > /etc/apt/sources.list.d/iovisor.list;
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
     apt-utils \
     bash \
@@ -37,7 +39,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     tcpdump \
     tcpreplay \
     valgrind \
-    sudo
+    sudo \
+    netcat \
+    bcc-tools \
+    python-pyroute2
 
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain $RUSTUP_TOOLCHAIN && \
     rustup --version; \
@@ -53,5 +58,9 @@ RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain $RUSTUP_TOO
 
 RUN mv /usr/sbin/tcpdump /usr/bin/tcpdump
 
+COPY entrypoint.sh /
+RUN chmod +x /entrypoint.sh
+
 WORKDIR /opt/sandbox
-CMD /bin/bash
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["/bin/bash"]
