@@ -41,8 +41,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     valgrind \
     sudo \
     netcat \
-    bcc-tools \
-    python-pyroute2
+    bcc-tools
 
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain $RUSTUP_TOOLCHAIN && \
     rustup --version; \
@@ -51,7 +50,7 @@ RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain $RUSTUP_TOO
     rustup component add rustfmt-preview rust-src && \
     cargo install clippy cargo-watch cargo-expand && \
     rm -rf /usr/local/cargo/registry && \
-    pip install Pygments \
+    pip install Pygments pyroute2 \
     --upgrade pip && \
     apt-get purge --auto-remove -y curl && \
     rm -rf /var/lib/apt /var/lib/apt/lists/* /tmp/* /var/tmp/*
