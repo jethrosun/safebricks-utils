@@ -17,8 +17,8 @@ $dimage = ENV.fetch("DIMAGE", "netbricks")
 $dtag = ENV.fetch("DTAG", "latest")
 $dproject = ENV.fetch("DPROJECT", "williamofockham")
 $ogpath = ENV.fetch("OGPATH", "../../og")
-$nbpath = ENV.fetch("NBPATH", "../NetBricks")
-$mgpath = ENV.fetch("MGPATH", "../MoonGen")
+$nbpath = ENV.fetch("NBPATH", "../netbricks")
+$mgpath = ENV.fetch("MGPATH", "../moongen")
 $dpdk_driver = ENV.fetch("DPDK_DRIVER", "uio_pci_generic")
 $dpdk_devices = ENV.fetch("DPDK_DEVICES", "0000:00:08.0 0000:00:09.0")
 
@@ -30,10 +30,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.disksize.size = "30GB"
   config.vm.synced_folder ".", "/vagrant", disabled: false
   if path_exists?($nbpath)
-    config.vm.synced_folder $nbpath, "/NetBricks", disabled: false
+    config.vm.synced_folder $nbpath, "/netbricks", disabled: false
   end
   if path_exists?($mgpath)
-    config.vm.synced_folder $mgpath, "/MoonGen", disabled: false
+    config.vm.synced_folder $mgpath, "/moongen", disabled: false
   end
   if path_exists?($ogpath)
     config.vm.synced_folder $ogpath, "/og", disabled: false

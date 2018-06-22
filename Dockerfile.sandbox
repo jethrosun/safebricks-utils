@@ -44,7 +44,8 @@ RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain $RUSTUP_TOO
     cargo --version; \
     rustc --version && \
     rustup component add rustfmt-preview rust-src && \
-    cargo install clippy cargo-watch cargo-expand && \
+    cargo install --force --version 0.0.206 clippy && \
+    cargo install cargo-watch cargo-expand && \
     rm -rf /usr/local/cargo/registry && \
     pip install Pygments \
     --upgrade pip && \
