@@ -23,5 +23,3 @@ modprobe uio_pci_generic
 # Load modules at boot
 echo "uio" >> /etc/modules
 echo "uio_pci_generic" >> /etc/modules
-
-echo "cd /vagrant" >> /home/vagrant/.bashrc
