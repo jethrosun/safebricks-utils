@@ -3,6 +3,8 @@ FROM williamofockham/moongen AS moongen
 FROM williamofockham/dpdk
 
 ENV NIGHTLY_DATE 2018-06-01
+ENV TCP_REPLAY 4.2.6
+ENV TCP_REPLAY_ETH_P='ETH_P_IP'
 ENV RUSTUP_TOOLCHAIN=nightly-$NIGHTLY_DATE \
 PATH=$PATH:/root/.cargo/bin
 
@@ -18,30 +20,38 @@ RUN echo "deb [trusted=yes] http://repo.iovisor.org/apt/xenial xenial-nightly ma
 RUN apt-get update && apt-get install -y --no-install-recommends \
     apt-utils \
     bash \
+    bcc-tools \
     ca-certificates \
     clang \
     cmake \
     curl \
     gcc \
-    git \
     gdb \
     gdbserver \
+    git \
     libc-dev \
     libclang-dev \
     libcurl4-gnutls-dev \
     libgnutls30 libgnutls-openssl-dev \
     libssl-dev \
+    libtool \
     make \
     mg \
     musl-dev \
     musl-tools \
     net-tools \
-    tcpdump \
-    tcpreplay \
-    valgrind \
-    sudo \
     netcat \
-    bcc-tools
+    sudo \
+    tcpdump \
+    valgrind
+
+RUN wget https://github.com/appneta/tcpreplay/releases/download/v$TCP_REPLAY/tcpreplay-$TCP_REPLAY.tar.gz -P /tmp && \
+    cd /tmp && \
+    tar zxvf tcpreplay-$TCP_REPLAY.tar.gz && cd tcpreplay-$TCP_REPLAY && \
+    # replace the occurrences of ETH_P_ALL with ETH_P_IP
+    sed -i 's|ETH_P_ALL|'"$TCP_REPLAY_ETH_P"'|g' src/common/sendpacket.c && \
+    ./configure && make && sudo make install
+
 
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain $RUSTUP_TOOLCHAIN && \
     rustup --version; \
@@ -51,7 +61,7 @@ RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain $RUSTUP_TOO
     cargo install --force --version 0.0.206 clippy && \
     cargo install cargo-watch cargo-expand && \
     rm -rf /usr/local/cargo/registry && \
-    pip install Pygments pyroute2 bitstruct \
+    pip install bitstruct toml Pygments pyroute2 \
     --upgrade pip && \
     apt-get purge --auto-remove -y curl && \
     rm -rf /var/lib/apt /var/lib/apt/lists/* /tmp/* /var/tmp/*
