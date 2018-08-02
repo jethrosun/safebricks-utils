@@ -50,7 +50,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.network "private_network", ip: "10.1.2.3", mac: "BADCAFEBEEF2", nic_type: "virtio"
   config.vm.network "private_network", ip: "fe80::b8dc:afff:feeb:eef3", mac: "BADCAFEBEEF3"
   config.vm.network "private_network", ip: "fe80::b8dc:afff:feeb:eef4", mac: "BADCAFEBEEF4"
-  
+
   # Setup the VM for DPDK, including binding the extra interface via the fetched
   # container
   config.vm.provision "shell", path: "vm-kernel-upgrade.sh"
