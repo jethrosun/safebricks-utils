@@ -23,3 +23,16 @@ modprobe uio_pci_generic
 # Load modules at boot
 echo "uio" >> /etc/modules
 echo "uio_pci_generic" >> /etc/modules
+
+# Ensure the following `proc` variables are set correctly
+echo "net.ipv6.conf.all.disable_ipv6 = 0
+net.ipv6.conf.default.forwarding = 1
+net.ipv6.conf.default.accept_source_route = 1
+net.ipv6.conf.default.accept_ra = 2
+net.ipv6.conf.all.forwarding = 1
+net.ipv6.conf.all.accept_source_route = 1
+net.ipv6.conf.all.accept_ra = 2
+net.ipv6.conf.all.seg6_enabled = 1
+net.ipv6.conf.default.seg6_enabled = 1" >> /etc/sysctl.conf
+
+sysctl -e -p
