@@ -29,6 +29,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # please see the online documentation at https://docs.vagrantup.com.
   config.vm.box = "ubuntu/xenial64"
   config.disksize.size = "30GB"
+
+  # e.g. for wireshark forwarding
+  config.ssh.forward_x11 = true
+  config.ssh.forward_agent = true
+
   if path_exists?($extra_mount_local_path)
     config.vm.synced_folder $extra_mount_local_path, $extra_mount_sync_path, disabled: false
     config.vm.synced_folder ".", "/vagrant", disabled: true
