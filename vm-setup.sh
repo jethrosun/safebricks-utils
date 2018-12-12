@@ -1,7 +1,7 @@
 #!/bin/bash
 
 export DEBIAN_FRONTEND=noninteractive
-export WIRESHARK_VERS=2.6.2
+export WIRESHARK_VERS=2.6.4
 
 # Install dependencies
 sudo apt-get -q update
@@ -13,10 +13,13 @@ sudo apt-get -q install -y cmake mg make git linux-headers-$(uname -r) clang-for
                            qttools5-dev-tools
 
 # Install Wireshark from src due to some vagrant/vm issues.
-wget https://www.wireshark.org/download/src/wireshark-$WIRESHARK_VERS.tar.xz
-tar -xJf wireshark-$WIRESHARK_VERS.tar.xz
-rm wireshark-$WIRESHARK_VERS.tar.xz
-cd wireshark-$WIRESHARK_VERS && ./configure && make && sudo make install && sudo ldconfig
+# Commented out as it can take a while to setup. Use locally if you want.
+#
+# wget https://www.wireshark.org/download/src/all-versions/wireshark-$WIRESHARK_VERS.tar.xz
+# tar -xJf wireshark-$WIRESHARK_VERS.tar.xz
+# rm wireshark-$WIRESHARK_VERS.tar.xz
+# cd wireshark-$WIRESHARK_VERS && ./configure && make -j$(nproc) && sudo make install && sudo ldconfig
+
 
 # Allocate 1024 hugepages of 2 MB
 # Change can be validated by executing 'cat /proc/meminfo | grep Huge'

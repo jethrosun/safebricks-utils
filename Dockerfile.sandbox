@@ -2,7 +2,7 @@ FROM williamofockham/moongen AS moongen
 
 FROM williamofockham/dpdk
 
-ENV NIGHTLY_DATE 2018-06-01
+ENV NIGHTLY_DATE 2018-12-01
 ENV TCP_REPLAY 4.2.6
 ENV TCP_REPLAY_ETH_P='ETH_P_IP'
 ENV RUSTUP_TOOLCHAIN=nightly-$NIGHTLY_DATE \
@@ -37,8 +37,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libtool \
     make \
     mg \
-    musl-dev \
-    musl-tools \
     net-tools \
     netcat \
     sudo \
@@ -58,8 +56,8 @@ RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain $RUSTUP_TOO
     cargo --version; \
     rustc --version && \
     rustup component add rustfmt-preview rust-src && \
-    cargo install --force --version 0.0.206 clippy && \
-    cargo install cargo-watch cargo-expand && \
+    rustup component add clippy-preview --toolchain=$RUSTUP_TOOLCHAIN && \
+    cargo install cargo-watch cargo-expand ripgrep hyperfine sccache && \
     rm -rf /usr/local/cargo/registry && \
     pip install bitstruct toml Pygments pyroute2 \
     --upgrade pip && \
