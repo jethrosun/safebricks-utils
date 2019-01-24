@@ -1,38 +1,71 @@
-ARG DPDK_VERSION
+##
+## compiling DPDK from source
+##
 
-FROM ubuntu:xenial
+FROM bitnami/minideb:stretch as builder
 
-ENV VERSION ${DPDK_VERSION:-17.08.1}
-ENV RTE_SDK /opt/dpdk/dpdk-stable-${VERSION}
-ENV RTE_TARGET build
-ENV RTE_ARCH x86_64
-ENV CFLAGS "-g3 -Wno-error=maybe-uninitialized -fPIC"
+ARG DPDK_VERSION=17.08.1
+ARG RTE_SDK=/tmp/dpdk-stable-${DPDK_VERSION}
+ARG CFLAGS="-g3 -Wno-error=maybe-uninitialized -fPIC"
 
-RUN apt-get update && apt-get install -y \
-    apt-utils \
-    build-essential \
-    dialog \
-    libnuma-dev \
-    libpcap-dev \
-    pciutils \
-    python \
-    python3 \
-    python-pip \
-    wget && \
-    rm -rf /var/lib/apt /var/lib/apt/lists/* /tmp/* /var/tmp/*
+RUN install_packages \
+  build-essential \
+  ca-certificates \
+  curl \
+  libnuma-dev \
+  libpcap-dev \
+  xz-utils && \
+  cd /tmp && \
+  curl -sSf https://fast.dpdk.org/rel/dpdk-${DPDK_VERSION}.tar.xz | tar -xJv
 
-RUN mkdir -p /opt/dpdk
+COPY common_linuxapp-17.08.container ${RTE_SDK}/config/common_linuxapp
+COPY defconfig_x86_64-nhm-linuxapp-gcc ${RTE_SDK}/config/defconfig_x86_64-nhm-linuxapp-gcc
 
-WORKDIR /opt/dpdk
+WORKDIR ${RTE_SDK}
 
-RUN wget --no-check-certificate https://fast.dpdk.org/rel/dpdk-$VERSION.tar.xz && \
-    tar xf dpdk-$VERSION.tar.xz && \
-    rm dpdk-$VERSION.tar.xz
+RUN make config T=x86_64-nhm-linuxapp-gcc EXTRA_CFLAGS="${CFLAGS}" && \
+  make -j$(nproc) EXTRA_CFLAGS="${CFLAGS}" && \
+  make install
 
-WORKDIR $RTE_SDK
 
-COPY dpdk/common_linuxapp-17.08.container $RTE_SDK/config/common_linuxapp
-COPY dpdk/defconfig_x86_64-nhm-linuxapp-gcc $RTE_SDK/config/defconfig_x86_64-nhm-linuxapp-gcc
-RUN ln -s $RTE_SDK/ /dpdk && make config T=x86_64-nhm-linuxapp-gcc \
-    EXTRA_CFLAGS="$CFLAGS"
-RUN make -j$(nproc) EXTRA_CFLAGS="$CFLAGS"
+##
+## image with DPDK dev libs and utils
+##
+FROM bitnami/minideb:stretch as dpdk
+
+LABEL maintainer="williamofockham <occam_engineering@comcast.com>"
+
+RUN install_packages \
+  iproute2 \
+  libnuma-dev \
+  libpcap-dev \
+  pciutils \
+  python
+
+COPY --from=builder /usr/local/bin /usr/local/bin
+COPY --from=builder /usr/local/include /usr/local/include
+COPY --from=builder /usr/local/lib /usr/local/lib/dpdk
+COPY --from=builder /usr/local/sbin /usr/local/sbin
+COPY --from=builder /usr/local/share/dpdk /usr/local/share/dpdk
+
+ENV RTE_SDK=/opt/dpdk
+
+RUN mkdir -p ${RTE_SDK}/build && \
+  ln -s /usr/local/lib/dpdk ${RTE_SDK}/build/lib && \
+  ln -s /usr/local/include/dpdk ${RTE_SDK}/build/include
+
+
+##
+## dpdk-devbind utility
+##
+FROM bitnami/minideb:stretch as dpdk-devbind
+
+LABEL maintainer="williamofockham <occam_engineering@comcast.com>"
+
+RUN install_packages \
+  iproute2 \
+  pciutils \
+  python
+
+COPY --from=builder /usr/local/share/dpdk/usertools/dpdk-devbind.py /usr/local/share/dpdk/usertools/dpdk-devbind.py
+COPY --from=builder /usr/local/sbin/dpdk-devbind /usr/local/sbin/dpdk-devbind

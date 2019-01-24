@@ -3,4 +3,5 @@
 *
 
 # White list only the required files
-!entrypoint.sh
+!common_linuxapp-17.08.container
+!defconfig_x86_64-nhm-linuxapp-gcc
