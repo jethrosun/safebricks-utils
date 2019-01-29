@@ -62,6 +62,7 @@ RUN install_packages \
     pkg-config \
     python-pip \
     python-setuptools \
+    python-wheel \
     sudo \
     tcpdump && \
   # pyroute2 and toml are agent deps
