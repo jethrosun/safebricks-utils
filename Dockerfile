@@ -37,6 +37,8 @@ ARG IOVISOR_REPO=/etc/apt/sources.list.d/iovisor.list
 
 ENV PATH=$PATH:/root/.cargo/bin
 ENV LD_LIBRARY_PATH=/opt/netbricks/target/native:$LD_LIBRARY_PATH
+ENV CARGO_INCREMENTAL=0
+ENV RUST_BACKTRACE=1
 
 COPY --from=tcpreplay /usr/local/bin /usr/local/bin
 COPY --from=tcpreplay /usr/local/share/man/man1 /usr/local/share/man/man1
