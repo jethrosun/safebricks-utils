@@ -29,15 +29,18 @@ ESM_VERSION = 0.3.2
 
 build-dpdk:
 	@docker build -f $(DPDK_DOCKERFILE) --target $(DPDK_IMG) \
-	-t $(NAMESPACE)/$(DPDK_IMG):$(DPDK_VERSION) $(DPDK_BASE_DIR)
+		--build-arg DPDK_VERSION=${DPDK_VERSION} \
+		-t $(NAMESPACE)/$(DPDK_IMG):$(DPDK_VERSION) $(DPDK_BASE_DIR)
 
 build-dpdk-devbind:
 	@docker build -f $(DPDK_DOCKERFILE) --target $(DPDK_DEVBIND_IMG) \
-	-t $(NAMESPACE)/$(DPDK_DEVBIND_IMG):$(DPDK_VERSION) $(DPDK_BASE_DIR)
+		--build-arg DPDK_VERSION=${DPDK_VERSION} \
+		-t $(NAMESPACE)/$(DPDK_DEVBIND_IMG):$(DPDK_VERSION) $(DPDK_BASE_DIR)
 
 build-sandbox:
 	@docker build -f $(SANDBOX_DOCKERFILE) \
-	-t $(NAMESPACE)/$(SANDBOX_IMG):$(RUST_VERSION) $(shell pwd)
+		--build-arg RUSTUP_TOOLCHAIN=${RUST_VERSION} \
+		-t $(NAMESPACE)/$(SANDBOX_IMG):$(RUST_VERSION) $(shell pwd)
 
 build-esm:
 	@docker build -f $(ESM_DOCKERFILE) \
@@ -78,8 +81,8 @@ publish: build push
 
 rmi:
 	@docker rmi $(NAMESPACE)/$(DPDK_IMG):$(DPDK_VERSION) \
-	$(NAMESPACE)/$(DPDK_DEVBIND_IMG):$(DPDK_VERSION) \
-	$(NAMESPACE)/$(SANDBOX_IMG):$(RUST_VERSION)
+		$(NAMESPACE)/$(DPDK_DEVBIND_IMG):$(DPDK_VERSION) \
+		$(NAMESPACE)/$(SANDBOX_IMG):$(RUST_VERSION)
 
 run:
 	@docker run -it --rm --privileged --network=host \

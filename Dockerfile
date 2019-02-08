@@ -7,20 +7,20 @@ FROM bitnami/minideb:stretch as tcpreplay
 ARG RELEASE=4.3.0
 
 RUN install_packages \
-  build-essential \
-  ca-certificates \
-  curl \
-  file \
-  libpcap-dev \
-  tcpdump && \
-  cd /tmp && \
-  curl -sSfL https://github.com/appneta/tcpreplay/releases/download/v${RELEASE}/tcpreplay-${RELEASE}.tar.xz | tar -xJv && \
-  cd tcpreplay-${RELEASE} && \
+    build-essential \
+    ca-certificates \
+    curl \
+    file \
+    libpcap-dev \
+    tcpdump \
+  && cd /tmp \
+  && curl -sSfL https://github.com/appneta/tcpreplay/releases/download/v${RELEASE}/tcpreplay-${RELEASE}.tar.xz | tar -xJv \
+  && cd tcpreplay-${RELEASE} \
   # replace the occurrences of ETH_P_ALL with ETH_P_IP
-  sed -i 's|ETH_P_ALL|'"ETH_P_IP"'|g' src/common/sendpacket.c && \
-  ./configure && \
-  make && \
-  make install
+  && sed -i 's|ETH_P_ALL|'"ETH_P_IP"'|g' src/common/sendpacket.c \
+  && ./configure \
+  && make \
+  && make install
 
 
 ##
@@ -31,7 +31,7 @@ FROM williamofockham/dpdk:17.08.1
 
 LABEL maintainer="williamofockham <occam_engineering@comcast.com>"
 
-ARG RUSTUP_TOOLCHAIN=nightly-2018-12-01
+ARG RUSTUP_TOOLCHAIN
 ARG BACKPORTS_REPO=/etc/apt/sources.list.d/stretch-backports.list
 ARG IOVISOR_REPO=/etc/apt/sources.list.d/iovisor.list
 
@@ -66,33 +66,33 @@ RUN install_packages \
     python-setuptools \
     python-wheel \
     sudo \
-    tcpdump && \
+    tcpdump \
   # pyroute2 and toml are agent deps
-  pip install \
+  && pip install \
     pyroute2 \
-    toml && \
+    toml \
   # install luajit 2.1.0-beta3 from stretch backports
-  echo "deb http://ftp.debian.org/debian stretch-backports main" > ${BACKPORTS_REPO} && \
-  apt-get update -o Dir::Etc::sourcelist=${BACKPORTS_REPO} && \
-  apt-get -t stretch-backports install -y --no-install-recommends libluajit-5.1-dev && \
+  && echo "deb http://ftp.debian.org/debian stretch-backports main" > ${BACKPORTS_REPO} \
+  && apt-get update -o Dir::Etc::sourcelist=${BACKPORTS_REPO} \
+  && apt-get -t stretch-backports install -y --no-install-recommends libluajit-5.1-dev \
   # install bcc tools
-  echo "deb [trusted=yes] http://repo.iovisor.org/apt/xenial xenial-nightly main" > ${IOVISOR_REPO} && \
-  apt-get update -o Dir::Etc::sourcelist=${IOVISOR_REPO} && \
-  apt-get -t xenial-nightly install -y --no-install-recommends bcc-tools && \
-  rm -rf /var/lib/apt/lists /var/cache/apt/archives && \
+  && echo "deb [trusted=yes] http://repo.iovisor.org/apt/xenial xenial-nightly main" > ${IOVISOR_REPO} \
+  && apt-get update -o Dir::Etc::sourcelist=${IOVISOR_REPO} \
+  && apt-get -t xenial-nightly install -y --no-install-recommends bcc-tools \
+  && rm -rf /var/lib/apt/lists /var/cache/apt/archives \
   # install rust nightly and tools
-  curl -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain $RUSTUP_TOOLCHAIN && \
-  rustup component add \
+  && curl -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain $RUSTUP_TOOLCHAIN \
+  && rustup component add \
     clippy-preview \
     rustfmt-preview \
-    rust-src && \
+    rust-src \
   # invoke cargo install independently otherwise partial failure has the incorrect exit code
-  cargo install cargo-watch && \
-  cargo install cargo-expand && \
-  cargo install hyperfine && \
-  cargo install ripgrep && \
-  cargo install sccache && \
-  rm -rf /root/.cargo/registry
+  && cargo install cargo-watch \
+  && cargo install cargo-expand \
+  && cargo install hyperfine \
+  && cargo install ripgrep \
+  && cargo install sccache \
+  && rm -rf /root/.cargo/registry
 
 ENV RUSTC_WRAPPER=sccache
 
