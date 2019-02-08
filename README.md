@@ -77,3 +77,7 @@ Because DPDK has a lot of requirements from the host OS, many files and director
 # Access to huge pages
 /dev/hugepages
 ```
+
+## Other Docker images
+
+1. `williamofockham/consul-esm`, [Consul ESM](https://github.com/hashicorp/consul-esm) is a daemon to run alongside Consul in order to run health checks for external nodes and update the status of those health checks in the catalog.

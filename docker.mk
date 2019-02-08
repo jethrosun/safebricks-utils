@@ -17,9 +17,14 @@ SANDBOX_IMG = sandbox
 SANDBOX_DOCKERFILE = Dockerfile
 RUST_VERSION = nightly-2018-12-01
 
-.PHONY: build build-dpdk build-dpdk-devbind build-sandbox \
-		push push-dpdk push-dpdk-devbind push-sandbox \
-		pull pull-dpdk pull-dpdk-devbind pull-sandbox \
+ESM_IMG = consul-esm
+ESM_BASE_DIR = $(BASE_DIR)/consul-esm
+ESM_DOCKERFILE = $(ESM_BASE_DIR)/Dockerfile
+ESM_VERSION = 0.3.2
+
+.PHONY: build build-dpdk build-dpdk-devbind build-sandbox build-esm \
+		push push-dpdk push-dpdk-devbind push-sandbox push-esm \
+		pull pull-dpdk pull-dpdk-devbind pull-sandbox pull-esm \
 		publish rmi
 
 build-dpdk:
@@ -34,7 +39,12 @@ build-sandbox:
 	@docker build -f $(SANDBOX_DOCKERFILE) \
 	-t $(NAMESPACE)/$(SANDBOX_IMG):$(RUST_VERSION) $(shell pwd)
 
-build: build-dpdk build-dpdk-devbind build-sandbox
+build-esm:
+	@docker build -f $(ESM_DOCKERFILE) \
+	--build-arg CONSUL_ESM=${ESM_VERSION} \
+	-t $(NAMESPACE)/$(ESM_IMG):$(ESM_VERSION) $(ESM_BASE_DIR)
+
+build: build-dpdk build-dpdk-devbind build-sandbox build-esm
 
 push-dpdk:
 	@docker push $(NAMESPACE)/$(DPDK_IMG):$(DPDK_VERSION)
@@ -45,7 +55,10 @@ push-dpdk-devbind:
 push-sandbox:
 	@docker push $(NAMESPACE)/$(SANDBOX_IMG):$(RUST_VERSION)
 
-push: push-dpdk push-dpdk-devbind push-sandbox
+push-esm:
+	@docker push $(NAMESPACE)/$(ESM_IMG):$(ESM_VERSION)
+
+push: push-dpdk push-dpdk-devbind push-sandbox push-esm
 
 pull-dpdk:
 	@docker pull $(NAMESPACE)/$(DPDK_IMG):$(DPDK_VERSION)
@@ -56,7 +69,10 @@ pull-dpdk-devbind:
 pull-sandbox:
 	@docker pull $(NAMESPACE)/$(SANDBOX_IMG):$(RUST_VERSION)
 
-pull: pull-dpdk pull-dpdk-devbind pull-sandbox
+pull-esm:
+	@docker pull $(NAMESPACE)/$(ESM_IMG):$(ESM_VERSION)
+
+pull: pull-dpdk pull-dpdk-devbind pull-sandbox pull-esm
 
 publish: build push
 
