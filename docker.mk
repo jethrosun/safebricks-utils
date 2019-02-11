@@ -22,9 +22,14 @@ ESM_BASE_DIR = $(BASE_DIR)/consul-esm
 ESM_DOCKERFILE = $(ESM_BASE_DIR)/Dockerfile
 ESM_VERSION = 0.3.2
 
-.PHONY: build build-dpdk build-dpdk-devbind build-sandbox build-esm \
-		push push-dpdk push-dpdk-devbind push-sandbox push-esm \
-		pull pull-dpdk pull-dpdk-devbind pull-sandbox pull-esm \
+DIND_IMG = containernet-node
+DIND_BASE_DIR = $(BASE_DIR)/dind
+DIND_DOCKERFILE = $(DIND_BASE_DIR)/Dockerfile
+DIND_VERSION = 1.23.2
+
+.PHONY: build build-dpdk build-dpdk-devbind build-sandbox build-esm build-dind \
+		push push-dpdk push-dpdk-devbind push-sandbox push-esm push-dind \
+		pull pull-dpdk pull-dpdk-devbind pull-sandbox pull-esm pull-dind \
 		publish rmi
 
 build-dpdk:
@@ -47,7 +52,12 @@ build-esm:
 	--build-arg CONSUL_ESM=${ESM_VERSION} \
 	-t $(NAMESPACE)/$(ESM_IMG):$(ESM_VERSION) $(ESM_BASE_DIR)
 
-build: build-dpdk build-dpdk-devbind build-sandbox build-esm
+build-dind:
+	@docker build -f $(DIND_DOCKERFILE) \
+	--build-arg COMPOSE=${DIND_VERSION} \
+	-t $(NAMESPACE)/$(DIND_IMG):$(DIND_VERSION) $(DIND_BASE_DIR)
+
+build: build-dpdk build-dpdk-devbind build-sandbox build-esm build-dind
 
 push-dpdk:
 	@docker push $(NAMESPACE)/$(DPDK_IMG):$(DPDK_VERSION)
@@ -61,7 +71,10 @@ push-sandbox:
 push-esm:
 	@docker push $(NAMESPACE)/$(ESM_IMG):$(ESM_VERSION)
 
-push: push-dpdk push-dpdk-devbind push-sandbox push-esm
+push-dind:
+	@docker push $(NAMESPACE)/$(DIND_IMG):$(DIND_VERSION)
+
+push: push-dpdk push-dpdk-devbind push-sandbox push-esm push-dind
 
 pull-dpdk:
 	@docker pull $(NAMESPACE)/$(DPDK_IMG):$(DPDK_VERSION)
@@ -75,14 +88,19 @@ pull-sandbox:
 pull-esm:
 	@docker pull $(NAMESPACE)/$(ESM_IMG):$(ESM_VERSION)
 
-pull: pull-dpdk pull-dpdk-devbind pull-sandbox pull-esm
+pull-dind:
+	@docker pull $(NAMESPACE)/$(DIND_IMG):$(DIND_VERSION)
+
+pull: pull-dpdk pull-dpdk-devbind pull-sandbox pull-esm pull-dind
 
 publish: build push
 
 rmi:
 	@docker rmi $(NAMESPACE)/$(DPDK_IMG):$(DPDK_VERSION) \
 		$(NAMESPACE)/$(DPDK_DEVBIND_IMG):$(DPDK_VERSION) \
-		$(NAMESPACE)/$(SANDBOX_IMG):$(RUST_VERSION)
+		$(NAMESPACE)/$(SANDBOX_IMG):$(RUST_VERSION) \
+		$(NAMESPACE)/$(ESM_IMG):$(ESM_VERSION) \
+		$(NAMESPACE)/$(DIND_IMG):$(DIND_VERSION)
 
 run:
 	@docker run -it --rm --privileged --network=host \
