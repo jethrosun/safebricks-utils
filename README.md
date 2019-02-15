@@ -83,3 +83,5 @@ Because DPDK has a lot of requirements from the host OS, many files and director
 1. `williamofockham/containernet-node`, [Docker in Docker](https://github.com/docker-library/docker/blob/65fab2cd767c10f22ee66afa919eda80dbdc8872/18.09/dind/Dockerfile) container used as Mininet host to mimic an actual host that runs Docker containers. The image includes [docker compose](https://docs.docker.com/compose/) and various network tools for troubleshooting.
 
 1. `williamofockham/consul-esm`, [Consul ESM](https://github.com/hashicorp/consul-esm) is a daemon to run alongside Consul in order to run health checks for external nodes and update the status of those health checks in the catalog.
+
+1. `williamofockham/gobgp`, [GoBGP](https://github.com/osrg/gobgp) is an open source BGP implementation designed from scratch for modern environment and implemented in a modern programming language.

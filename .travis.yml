@@ -54,3 +54,9 @@ jobs:
               if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
                 make -f docker.mk push-esm
               fi
+    - name: gobgp
+      script: |
+              make -f docker.mk build-gobgp
+              if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
+                make -f docker.mk push-gobgp
+              fi

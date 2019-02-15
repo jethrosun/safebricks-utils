@@ -27,9 +27,14 @@ DIND_BASE_DIR = $(BASE_DIR)/dind
 DIND_DOCKERFILE = $(DIND_BASE_DIR)/Dockerfile
 DIND_VERSION = 1.23.2
 
-.PHONY: build build-dpdk build-dpdk-devbind build-sandbox build-esm build-dind \
-		push push-dpdk push-dpdk-devbind push-sandbox push-esm push-dind \
-		pull pull-dpdk pull-dpdk-devbind pull-sandbox pull-esm pull-dind \
+GOBGP_IMG = gobgp
+GOBGP_BASE_DIR = $(BASE_DIR)/gobgp
+GOBGP_DOCKERFILE = $(GOBGP_BASE_DIR)/Dockerfile
+GOBGP_VERSION = 2.1.0
+
+.PHONY: build build-dpdk build-dpdk-devbind build-sandbox build-esm build-dind build-gobgp \
+		push push-dpdk push-dpdk-devbind push-sandbox push-esm push-dind push-gobgp \
+		pull pull-dpdk pull-dpdk-devbind pull-sandbox pull-esm pull-dind pull-gobgp \
 		publish rmi
 
 build-dpdk:
@@ -57,7 +62,12 @@ build-dind:
 	--build-arg COMPOSE=${DIND_VERSION} \
 	-t $(NAMESPACE)/$(DIND_IMG):$(DIND_VERSION) $(DIND_BASE_DIR)
 
-build: build-dpdk build-dpdk-devbind build-sandbox build-esm build-dind
+build-gobgp:
+	@docker build -f $(GOBGP_DOCKERFILE) \
+	--build-arg GOBGP=${GOBGP_VERSION} \
+	-t $(NAMESPACE)/$(GOBGP_IMG):$(GOBGP_VERSION) $(GOBGP_BASE_DIR)
+
+build: build-dpdk build-dpdk-devbind build-sandbox build-esm build-dind build-gobgp
 
 push-dpdk:
 	@docker push $(NAMESPACE)/$(DPDK_IMG):$(DPDK_VERSION)
@@ -74,7 +84,10 @@ push-esm:
 push-dind:
 	@docker push $(NAMESPACE)/$(DIND_IMG):$(DIND_VERSION)
 
-push: push-dpdk push-dpdk-devbind push-sandbox push-esm push-dind
+push-gobgp:
+	@docker push $(NAMESPACE)/$(GOBGP_IMG):$(GOBGP_VERSION)
+
+push: push-dpdk push-dpdk-devbind push-sandbox push-esm push-dind push-gobgp
 
 pull-dpdk:
 	@docker pull $(NAMESPACE)/$(DPDK_IMG):$(DPDK_VERSION)
@@ -91,7 +104,10 @@ pull-esm:
 pull-dind:
 	@docker pull $(NAMESPACE)/$(DIND_IMG):$(DIND_VERSION)
 
-pull: pull-dpdk pull-dpdk-devbind pull-sandbox pull-esm pull-dind
+pull-gobgp:
+	@docker pull $(NAMESPACE)/$(GOBGP_IMG):$(GOBGP_VERSION)
+
+pull: pull-dpdk pull-dpdk-devbind pull-sandbox pull-esm pull-dind pull-gobgp
 
 publish: build push
 
@@ -100,7 +116,8 @@ rmi:
 		$(NAMESPACE)/$(DPDK_DEVBIND_IMG):$(DPDK_VERSION) \
 		$(NAMESPACE)/$(SANDBOX_IMG):$(RUST_VERSION) \
 		$(NAMESPACE)/$(ESM_IMG):$(ESM_VERSION) \
-		$(NAMESPACE)/$(DIND_IMG):$(DIND_VERSION)
+		$(NAMESPACE)/$(DIND_IMG):$(DIND_VERSION) \
+		$(NAMESPACE)/$(GOBGP_IMG):$(GOBGP_VERSION)
 
 run:
 	@docker run -it --rm --privileged --network=host \
