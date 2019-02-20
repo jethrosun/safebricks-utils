@@ -5,7 +5,7 @@ branches:
   only:
     - master
 
-language: generic
+language: minimal
 
 notifications:
   email: false
@@ -24,9 +24,33 @@ before_install:
 jobs:
   include:
     - stage: build
+      name: dpdk
       script: |
+              make -f docker.mk build-dpdk
               if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
-                make -f docker.mk publish
-              else
-                make -f docker.mk build
+                make -f docker.mk push-dpdk
+              fi
+    - name: dpdk-devbind
+      script: |
+              make -f docker.mk build-dpdk-devbind
+              if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
+                make -f docker.mk push-dpdk-devbind
+              fi
+    - name: sandbox
+      script: |
+              make -f docker.mk build-sandbox
+              if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
+                make -f docker.mk push-sandbox
+              fi
+    - name: dind
+      script: |
+              make -f docker.mk build-dind
+              if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
+                make -f docker.mk push-dind
+              fi
+    - name: esm
+      script: |
+              make -f docker.mk build-esm
+              if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
+                make -f docker.mk push-esm
               fi
