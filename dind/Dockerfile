@@ -14,9 +14,11 @@ ENV COMPOSE_FILE=/etc/docker-compose.yml
 RUN apk update \
   && apk add \
     bash \
+    bind-tools \
     ca-certificates \
     curl \
     ethtool \
+    grep \
     ip6tables \
     iptables \
     iputils \
