@@ -32,9 +32,15 @@ GOBGP_BASE_DIR = $(BASE_DIR)/gobgp
 GOBGP_DOCKERFILE = $(GOBGP_BASE_DIR)/Dockerfile
 GOBGP_VERSION = 2.1.0
 
-.PHONY: build build-dpdk build-dpdk-devbind build-sandbox build-esm build-dind build-gobgp \
-		push push-dpdk push-dpdk-devbind push-sandbox push-esm push-dind push-gobgp \
-		pull pull-dpdk pull-dpdk-devbind pull-sandbox pull-esm pull-dind pull-gobgp \
+PACKER_ANSIBLE = packer-ansible
+PACKER_ANSIBLE_IMG = $(PACKER_ANSIBLE)
+PACKER_ANSIBLE_BASE_DIR = $(BASE_DIR)/$(PACKER_ANSIBLE)
+PACKER_ANSIBLE_DOCKERFILE = $(PACKER_ANSIBLE_BASE_DIR)/Dockerfile
+ANSIBLE_VERSION = 2.7.6
+
+.PHONY: build build-dpdk build-dpdk-devbind build-sandbox build-esm build-dind build-gobgp build-packer-ansible \
+		push push-dpdk push-dpdk-devbind push-sandbox push-esm push-dind push-gobgp push-packer-ansible \
+		pull pull-dpdk pull-dpdk-devbind pull-sandbox pull-esm pull-dind pull-gobgp pull-packer-ansible \
 		publish rmi
 
 build-dpdk:
@@ -67,7 +73,12 @@ build-gobgp:
 	--build-arg GOBGP=${GOBGP_VERSION} \
 	-t $(NAMESPACE)/$(GOBGP_IMG):$(GOBGP_VERSION) $(GOBGP_BASE_DIR)
 
-build: build-dpdk build-dpdk-devbind build-sandbox build-esm build-dind build-gobgp
+build-packer-ansible:
+	@docker build -f $(PACKER_ANSIBLE_DOCKERFILE) \
+	--build-arg ANSIBLE_VERSION=${ANSIBLE_VERSION} \
+	-t $(NAMESPACE)/$(PACKER_ANSIBLE):$(ANSIBLE_VERSION) $(PACKER_ANSIBLE_BASE_DIR)
+
+build: build-dpdk build-dpdk-devbind build-sandbox build-esm build-dind pull-gobgp build-packer-ansible
 
 push-dpdk:
 	@docker push $(NAMESPACE)/$(DPDK_IMG):$(DPDK_VERSION)
@@ -87,7 +98,10 @@ push-dind:
 push-gobgp:
 	@docker push $(NAMESPACE)/$(GOBGP_IMG):$(GOBGP_VERSION)
 
-push: push-dpdk push-dpdk-devbind push-sandbox push-esm push-dind push-gobgp
+push-packer-ansible:
+	@docker push $(NAMESPACE)/$(PACKER_ANSIBLE_IMG):$(ANSIBLE_VERSION)
+
+push: push-dpdk push-dpdk-devbind push-sandbox push-esm push-dind push-gobgp push-packer-ansible
 
 pull-dpdk:
 	@docker pull $(NAMESPACE)/$(DPDK_IMG):$(DPDK_VERSION)
@@ -107,7 +121,10 @@ pull-dind:
 pull-gobgp:
 	@docker pull $(NAMESPACE)/$(GOBGP_IMG):$(GOBGP_VERSION)
 
-pull: pull-dpdk pull-dpdk-devbind pull-sandbox pull-esm pull-dind pull-gobgp
+pull-packer-ansible:
+	@docker pull $(NAMESPACE)/$(PACKER_ANSIBLE_IMG):$(ANSIBLE_VERSION)
+
+pull: pull-dpdk pull-dpdk-devbind pull-sandbox pull-esm pull-dind pull-gobgp pull-packer-ansible
 
 publish: build push
 
