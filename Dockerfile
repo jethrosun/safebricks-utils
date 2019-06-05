@@ -92,7 +92,9 @@ RUN install_packages \
   && cargo install hyperfine \
   && cargo install ripgrep \
   && cargo install sccache \
-  && rm -rf /root/.cargo/registry
+  && rm -rf /root/.cargo/registry \
+  && apt-get update \
+  && apt-get install net-tools
 
 ENV RUSTC_WRAPPER=sccache
 

@@ -3,7 +3,7 @@
 # Expectation for docker commands is to work with hub.docker.com; so
 # YOU MUST BE Docker LOGGED-IN.
 
-NAMESPACE = williamofockham
+NAMESPACE = yangzhou1997
 
 BASE_DIR = $(shell pwd)
 
