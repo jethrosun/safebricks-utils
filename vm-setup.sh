@@ -23,7 +23,10 @@ sudo apt-get -q install -y cmake mg make git linux-headers-$(uname -r) clang-for
 
 # Allocate 1024 hugepages of 2 MB
 # Change can be validated by executing 'cat /proc/meminfo | grep Huge'
-echo 1024 > /sys/kernel/mm/hugepages/hugepages-2048kB/nr_hugepages
+#echo 1024 > /sys/kernel/mm/hugepages/hugepages-2048kB/nr_hugepages
+# on NUMA system with two sockets
+echo 1024 | sudo tee /sys/devices/system/node/node0/hugepages/hugepages-2048kB/nr_hugepages
+echo 1024 | sudo tee /sys/devices/system/node/node1/hugepages/hugepages-2048kB/nr_hugepages
 
 # Allocate 1024 hugepages of 2 MB at startup
 echo "vm.nr_hugepages = 1024" >> /etc/sysctl.conf
