@@ -15,7 +15,7 @@ $scripts_dir = File.dirname(File.realdirpath(__FILE__))
 # the utils submodule directory relative to the base
 $submod_dir = Pathname.new($scripts_dir).relative_path_from(Pathname.new($base_dir))
 
-$devbind_img = "yangzhou/dpdk-devbind:17.08.1"
+$devbind_img = "yangzhou1997/dpdk-devbind:17.08.1"
 $dpdk_driver = "uio_pci_generic"
 $dpdk_devices = "0000:00:08.0 0000:00:09.0 0000:00:0a.0 0000:00:10.0"
 
