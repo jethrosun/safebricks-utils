@@ -15,7 +15,7 @@ DPDK_VERSION = 17.08.1
 
 SANDBOX_IMG = sandbox
 SANDBOX_DOCKERFILE = Dockerfile
-RUST_VERSION = nightly-2019-02-01
+RUST_VERSION = nightly-2019-05-15
 
 ESM_IMG = consul-esm
 ESM_BASE_DIR = $(BASE_DIR)/consul-esm
