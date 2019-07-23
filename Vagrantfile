@@ -30,8 +30,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.ssh.forward_x11 = true
   config.ssh.forward_agent = true
 
-  config.vm.synced_folder ".", "/vagrant", disabled: false
-  config.vm.provision "shell", inline: "echo 'cd /vagrant' >> /home/vagrant/.bashrc", run: "always"
+  #config.vm.synced_folder ".", "/vagrant", disabled: false
+  config.vm.provision "shell", inline: "echo 'cd ~' >> /home/vagrant/.bashrc", run: "always"
 
   # specific IP. This option is needed because DPDK takes over the NIC.
   # 0000:00:08.0 used for netbricks
