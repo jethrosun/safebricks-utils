@@ -32,8 +32,6 @@ echo 1024 > /sys/kernel/mm/hugepages/hugepages-2048kB/nr_hugepages
 # Allocate 1024 hugepages of 2 MB at startup
 echo "vm.nr_hugepages = 1024" >> /etc/sysctl.conf
 
-sudo apt-get install -y dpdk-igb-uio-dkms
-
 # Install the uio_pci_generic driver
 modprobe uio_pci_generic
 
