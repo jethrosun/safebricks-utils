@@ -7,11 +7,12 @@ export WIRESHARK_VERS=2.6.4
 # Install dependencies
 sudo apt-get -q update
 sudo apt-get -q install -y cmake mg make git linux-headers-$(uname -r) clang-format \
-                           pkg-config xauth xterm linux-image-extra-$(uname -r) \
+                           pkg-config xauth xterm  \
                            libcap-dev libgcrypt11-dev libglib2.0-dev \
                            qt5-default libqt5multimedia5 qtmultimedia5-dev \
                            libpcap-dev libqt5svg5-dev qttools5-dev \
                            qttools5-dev-tools ntp libelf-dev
+                           # pkg-config xauth xterm linux-image-extra-$(uname -r) \
 
 # Install Wireshark from src due to some vagrant/vm issues.
 # Commented out as it can take a while to setup. Use locally if you want.
